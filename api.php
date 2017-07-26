@@ -12,6 +12,7 @@ class api{
 		'apikey' => 'c0f1452a922e366033db671828693d9c'
 	);
 	private $client;
+	private $headers = [];
 	public function __construct(array $options = array()){
 		$dbOptions = options::get('packages.musixmatch.api');
 		if(!is_array($dbOptions)){
@@ -36,6 +37,7 @@ class api{
 		if(!$result){
 			throw new Exception('Json Parse');
 		}
+		$this->headers = isset($result['message']['header']) ? $result['message']['header'] : [];
 		if(isset($result['message']['body'])){
 			return $result['message']['body'];
 		}elseif(isset($result['message']['header']['status_code'])){
@@ -71,5 +73,8 @@ class api{
 		$parameters['signature'] = base64_encode(hash_hmac('sha1', $url, $this->options['signature']['secret'], true));
 		$parameters['signature_protocol'] = 'sha1';
 		return $parameters;
+	}
+	public function getHeader(string $key){
+		return isset($this->headers[$key]) ? $this->headers[$key] : null;
 	}
 }
