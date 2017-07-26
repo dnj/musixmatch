@@ -31,7 +31,7 @@ class artist{
 	}
 	private function search(array $paramters):collection{
 		$collection = new collection();
-		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($paramters) {
+		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($paramters, $collection) {
 			switch($order[0]){
 				case(''):
 				case('rating'):
@@ -41,6 +41,7 @@ class artist{
 			$paramters['page'] = $page;
 			$paramters['page_size'] = $ipp;
 			$result = $this->api->sendRequest("artist.search", $paramters);
+			$collection->setTotalCount($this->api->getHeader('available'));
 			return $this->parseSearchResponse($result);
 		});
 		return $collection;

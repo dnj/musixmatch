@@ -79,13 +79,14 @@ class track{
 
 	public function searchByAlbum(int $album):collection{
 		$collection = new collection();
-		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($album) {
+		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($album, $collection) {
 			$result = $this->api->sendRequest("album.tracks.get", array(
 				'album_id' => $album,
 				'page' => $page,
 				'page_size' => $ipp,
 				'part' => 'track_lyrics_translation_status'
 			));
+			$collection->setTotalCount($this->api->getHeader('available'));
 			return $this->parseSearchResponse($result);
 		});
 		return $collection;
@@ -166,7 +167,7 @@ class track{
 
 	private function search(array $paramters):collection{
 		$collection = new collection();
-		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($paramters) {
+		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($paramters, $collection) {
 			switch($order[0]){
 				case('rating'):
 					$paramters['s_track_rating'] = $order[1];
@@ -175,6 +176,7 @@ class track{
 			$paramters['page'] = $page;
 			$paramters['page_size'] = $ipp;
 			$result = $this->api->sendRequest("track.search", $paramters);
+			$collection->setTotalCount($this->api->getHeader('available'));
 			return $this->parseSearchResponse($result);
 		});
 		return $collection;

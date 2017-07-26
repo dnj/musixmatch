@@ -27,7 +27,7 @@ class album{
 	}
 	public function searchByArtist(int $artist):collection{
 		$collection = new collection();
-		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($artist) {
+		$collection->onPaginate(function(int $page, int $ipp, array $order) use ($collection, $artist) {
 			$paramters = array(
 				'artist_id' => $artist,
 				'page' => $page,
@@ -40,6 +40,7 @@ class album{
 					break;
 			}
 			$result = $this->api->sendRequest("artist.albums.get", $paramters);
+			$collection->setTotalCount($this->api->getHeader('available'));
 			return $this->parseSearchResponse($result);
 		});
 		return $collection;
