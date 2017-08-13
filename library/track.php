@@ -114,6 +114,9 @@ class track{
 		if(!isset($result['lyrics'])){
 			throw new \Exception("lyrics not isset");
 		}
+		if(!$this->language){
+			$this->language = $result['lyrics']['lyrics_language'];
+		}
 		$lyrics = new lyrics($this->api);
 		return $lyrics->fromLyricsAPI($result['lyrics']);
 	}
@@ -123,6 +126,9 @@ class track{
 		));
 		if(!isset($result['subtitle'])){
 			throw new \Exception("subtitle not isset");
+		}
+		if(!$this->language){
+			$this->language = $result['subtitle']['subtitle_language'];
 		}
 		$lyrics = new lyrics($this->api);
 		return $lyrics->fromSubtitleAPI($result['subtitle']);
